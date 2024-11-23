@@ -1,16 +1,32 @@
 const express = require('express')
+const path = require ("path")
 
 const urlRoutes=require('./routes/url')
 const { connectToMongoDB }=require('./connect')
+const staticRouter = require ("./routes/staticRouter")
 
 const URL = require('./model/url')
 
 const app = express ();
 const PORT = 7000;
 
-app.use(express.json())
+app.use(express.json());
+app.use(express.urlencoded({extended:false}));
+
 
 app.use('/url',urlRoutes);
+app.use('/',staticRouter)
+
+app.set("view engine","ejs");
+app.set("views", path.resolve("./views"))
+
+//this is server side rendering
+// app.get("/test",async (req,res)=>{
+//     const allurls = await URL.find({});
+//      return res.render('home',{
+//         urls:allurls,
+//      })
+// })
 
 app.get("/:shortid", async(req,res)=>{
     const shortid= req.params.shortid;
